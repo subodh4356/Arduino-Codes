@@ -1,0 +1,230 @@
+
+// 1. SONAR
+#include <NewPing.h>
+#define TRIGGER_PIN 8
+#define ECHO_PIN 9
+#define MAX_DISTANCE 200 // Max distance in cm
+
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+
+void sonarSetup() {
+  Serial.begin(9600);
+}
+
+void sonarLoop() {
+  delay(50);
+  int distance = sonar.ping_cm();
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+}
+
+
+
+// 2. Rain Detector Alarm
+#define RAIN_SENSOR_PIN A0
+#define BUZZER_PIN 8
+
+void rainSetup() {
+  pinMode(RAIN_SENSOR_PIN, INPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+}
+
+void rainLoop() {
+  int rainValue = analogRead(RAIN_SENSOR_PIN);
+  if (rainValue < 500) {
+    digitalWrite(BUZZER_PIN, HIGH);
+  } else {
+    digitalWrite(BUZZER_PIN, LOW);
+  }
+}
+
+
+// 3. Fire Detector and Alarm
+#define FLAME_SENSOR_PIN A1
+
+void fireSetup() {
+  pinMode(FLAME_SENSOR_PIN, INPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+}
+
+void fireLoop() {
+  int flameValue = analogRead(FLAME_SENSOR_PIN);
+  if (flameValue < 400) {
+    digitalWrite(BUZZER_PIN, HIGH);
+  } else {
+    digitalWrite(BUZZER_PIN, LOW);
+  }
+}
+
+// 4. Automatic Street Light
+#define LDR_PIN A2
+#define LED_PIN 9
+
+void lightSetup() {
+  pinMode(LDR_PIN, INPUT);
+  pinMode(LED_PIN, OUTPUT);
+}
+
+void lightLoop() {
+  int lightValue = analogRead(LDR_PIN);
+  if (lightValue < 500) {
+    digitalWrite(LED_PIN, HIGH);
+  } else {
+    digitalWrite(LED_PIN, LOW);
+  }
+}
+
+
+// 5. Automatic Hand Sanitizer
+#define MOTOR_PIN 10
+
+void sanitizerSetup() {
+  pinMode(MOTOR_PIN, OUTPUT);
+  digitalWrite(MOTOR_PIN, LOW);
+}
+
+void sanitizerLoop() {
+  long duration, distance;
+  digitalWrite(TRIGGER_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIGGER_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIGGER_PIN, LOW);
+
+  duration = pulseIn(ECHO_PIN, HIGH);
+  distance = (duration / 2) / 29.1;
+
+  if (distance < 10) {
+    digitalWrite(MOTOR_PIN, HIGH);
+    delay(1000);
+    digitalWrite(MOTOR_PIN, LOW);
+  }
+}
+
+
+// 6. Automatic Water Pump
+#define WATER_LEVEL_PIN A3
+#define PUMP_PIN 11
+
+void pumpSetup() {
+  pinMode(WATER_LEVEL_PIN, INPUT);
+  pinMode(PUMP_PIN, OUTPUT);
+}
+
+void pumpLoop() {
+  int waterLevel = analogRead(WATER_LEVEL_PIN);
+  if (waterLevel < 300) {
+    digitalWrite(PUMP_PIN, HIGH);
+  } else {
+    digitalWrite(PUMP_PIN, LOW);
+  }
+}
+
+
+// 7. Light Intensity Meter
+void lightMeterSetup() {
+  Serial.begin(9600);
+}
+
+void lightMeterLoop() {
+  int lightIntensity = analogRead(LDR_PIN);
+  Serial.print("Light Intensity: ");
+  Serial.println(lightIntensity);
+  delay(500);
+}
+
+
+// 8. Gas Leakage Detector
+#define GAS_SENSOR_PIN A4
+
+void gasSetup() {
+  pinMode(GAS_SENSOR_PIN, INPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+}
+
+void gasLoop() {
+  int gasValue = analogRead(GAS_SENSOR_PIN);
+  if (gasValue > 500) {
+    digitalWrite(BUZZER_PIN, HIGH);
+  } else {
+    digitalWrite(BUZZER_PIN, LOW);
+  }
+}
+
+
+// 9. Alcohol Detector
+#define MQ3_PIN A5
+
+void alcoholSetup() {
+  pinMode(MQ3_PIN, INPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+}
+
+void alcoholLoop() {
+  int alcoholLevel = analogRead(MQ3_PIN);
+  if (alcoholLevel > 400) {
+    digitalWrite(BUZZER_PIN, HIGH);
+  } else {
+    digitalWrite(BUZZER_PIN, LOW);
+  }
+}
+
+
+
+
+// 10. Automatic Dustbin
+#include <Servo.h>
+#define SERVO_PIN 12
+
+Servo dustbinServo;
+
+void dustbinSetup() {
+  dustbinServo.attach(SERVO_PIN);
+  dustbinServo.write(0);
+}
+
+void dustbinLoop() {
+  long duration, distance;
+  digitalWrite(TRIGGER_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIGGER_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIGGER_PIN, LOW);
+
+  duration = pulseIn(ECHO_PIN, HIGH);
+  distance = (duration / 2) / 29.1;
+
+  if (distance < 10) {
+    dustbinServo.write(90);
+    delay(5000);
+    dustbinServo.write(0);
+  }
+}
+
+// Main Setup and Loop
+void setup() {
+  sonarSetup();
+  rainSetup();
+  fireSetup();
+  lightSetup();
+  sanitizerSetup();
+  pumpSetup();
+  lightMeterSetup();
+  gasSetup();
+  alcoholSetup();
+  dustbinSetup();
+}
+
+void loop() {
+  sonarLoop();
+  rainLoop();
+  fireLoop();
+  lightLoop();
+  sanitizerLoop();
+  pumpLoop();
+  lightMeterLoop();
+  gasLoop();
+  alcoholLoop();
+  dustbinLoop();
+}
